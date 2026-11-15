@@ -1,26 +1,15 @@
 {
   "name": "माझे आर्थिक नियोजन",
   "short_name": "आर्थिक नियोजन",
-  "description": "उत्पन्न, खर्च, EMI आणि बचतीचा वैयक्तिक मराठी हिशोब",
-  "lang": "mr-IN",
-  "start_url": "./index.html",
+  "lang": "mr",
+  "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "orientation": "portrait",
   "background_color": "#f3f6f4",
   "theme_color": "#174c3c",
+  "description": "मराठी वैयक्तिक आर्थिक नियोजन अ‍ॅप",
   "icons": [
-    {
-      "src": "icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
-    }
+    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png"}
   ]
 }
