@@ -38,7 +38,6 @@ $('restoreBtn').onclick=()=>$('restoreFile').click();$('restoreFile').onchange=a
 // PIN is a local convenience lock, not encryption.
 const enc=new TextEncoder();async function digest(pin,salt){const data=enc.encode(salt+':'+pin);const hash=await crypto.subtle.digest('SHA-256',data);return [...new Uint8Array(hash)].map(x=>x.toString(16).padStart(2,'0')).join('')}
 let pinMode='unlock';function showPin(mode){pinMode=mode;$('pinOverlay').style.display='flex';$('pinInput').value='';$('pinConfirm').value='';$('pinError').textContent='';$('pinConfirm').classList.toggle('hidden',mode!=='setup');$('pinCancel').classList.toggle('hidden',mode==='unlock');$('pinTitle').textContent=mode==='setup'?'नवीन PIN सेट करा':mode==='change'?'PIN बदला':'अ‍ॅप लॉक';$('pinMessage').textContent=mode==='unlock'?'अ‍ॅप उघडण्यासाठी PIN टाका.':'४ ते ६ अंकी PIN टाका. PIN लक्षात ठेवा; विसरल्यास अ‍ॅपचा स्थानिक डेटा रीसेट करावा लागू शकतो.';$('pinSubmit').textContent=mode==='unlock'?'अ‍ॅप उघडा':'जतन करा';$('pinInput').focus()}
-
 async function pinAction(){
   const p = $('pinInput').value;
   const saved = JSON.parse(localStorage.getItem(PINKEY) || 'null');
