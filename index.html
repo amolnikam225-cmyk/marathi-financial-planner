@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="mr">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#174c3c"><meta name="description" content="मराठी वैयक्तिक आर्थिक नियोजन अ‍ॅप"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png"><title>माझे आर्थिक नियोजन</title>
+<style>
+:root{--green:#174c3c;--bg:#f3f6f4;--card:#fff;--ink:#17231e;--muted:#66736c;--line:#e3eae5;--red:#b43d3d;--blue:#315e9b}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,'Noto Sans Devanagari',sans-serif}.top{background:var(--green);color:white;padding:22px 16px 20px;border-radius:0 0 22px 22px}.top h1{font-size:22px;margin:0 0 5px}.top p{margin:0;color:#d9e8df;font-size:13px}.wrap{max-width:760px;margin:auto;padding:14px}.monthrow{display:flex;gap:10px;align-items:center;margin:2px 0 14px}.monthrow label{font-size:14px;font-weight:650}.monthrow input{padding:9px;border:1px solid var(--line);border-radius:10px;background:white;font:inherit}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.card{background:var(--card);padding:14px;border-radius:15px;box-shadow:0 2px 10px #183b2a0b;border:1px solid var(--line)}.metric small{color:var(--muted);font-size:12px}.metric strong{display:block;font-size:21px;margin-top:5px}.metric.in strong{color:#18734b}.metric.out strong{color:var(--red)}.metric.save strong{color:var(--blue)}h2{font-size:17px;margin:20px 2px 10px}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.field{display:flex;flex-direction:column;gap:5px}.field.full{grid-column:1/-1}label{font-size:12px;color:var(--muted)}input,select,button{font:inherit}input,select{width:100%;padding:11px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}button{border:0;border-radius:10px;padding:11px 14px;background:var(--green);color:white;font-weight:650;cursor:pointer}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.actions .secondary{background:#e8efea;color:var(--green)}.list{display:flex;flex-direction:column;gap:8px}.item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:11px;border:1px solid var(--line);border-radius:12px;background:white}.item b{font-size:14px}.item small{display:block;color:var(--muted);font-size:11px;margin-top:3px}.amt{font-weight:700;white-space:nowrap}.amt.in{color:#18734b}.amt.out{color:var(--red)}.del{background:#f9eaea;color:var(--red);padding:7px 9px;margin-left:5px}.empty{padding:18px;text-align:center;color:var(--muted);font-size:13px}.note{font-size:12px;color:var(--muted);line-height:1.55;margin:12px 2px}.hidden{display:none}@media(min-width:600px){.grid{grid-template-columns:repeat(4,1fr)}}
+</style></head>
+<body><header class="top"><h1>माझे आर्थिक नियोजन</h1><p>उत्पन्न • खर्च • EMI • बचत — तुमचा वैयक्तिक हिशोब</p></header>
+<main class="wrap">
+<div class="monthrow"><label for="month">महिना निवडा</label><input id="month" type="month"></div>
+<section class="grid">
+<div class="card metric in"><small>एकूण उत्पन्न</small><strong id="income">₹0</strong></div>
+<div class="card metric out"><small>एकूण खर्च + EMI</small><strong id="expense">₹0</strong></div>
+<div class="card metric save"><small>बचत</small><strong id="saving">₹0</strong></div>
+<div class="card metric"><small>शिल्लक रक्कम</small><strong id="balance">₹0</strong></div>
+</section>
+<h2>नवीन नोंद करा</h2><section class="card">
+<div class="formgrid">
+<div class="field"><label for="type">नोंदीचा प्रकार</label><select id="type"><option value="income">उत्पन्न</option><option value="expense">खर्च</option><option value="emi">कर्ज / EMI</option><option value="saving">बचत</option></select></div>
+<div class="field"><label for="date">तारीख</label><input id="date" type="date"></div>
+<div class="field full"><label for="detail">तपशील</label><input id="detail" placeholder="उदा. पगार, किराणा, घरभाडे, EMI"></div>
+<div class="field full"><label for="amount">रक्कम (₹)</label><input id="amount" type="number" min="1" step="0.01" placeholder="उदा. 1500" inputmode="decimal"></div>
+</div><div class="actions"><button id="add">नोंद जतन करा</button><button class="secondary" id="export">CSV अहवाल डाउनलोड</button></div>
+</section>
+<h2>या महिन्यातील नोंदी</h2><section class="list" id="entries"></section>
+<p class="note">टीप: तुमच्या नोंदी या मोबाईलच्या या ब्राउझरमध्येच साठवल्या जातात. ब्राउझरचा डेटा/कॅशे पुसल्यास नोंदी नष्ट होऊ शकतात. वेळोवेळी CSV अहवाल डाउनलोड करून सुरक्षित ठेवा. ही आवृत्ती इंटरनेटशिवाय उघडता येणारी साधी वैयक्तिक नोंदवही आहे; बँक खात्याशी जोडलेली नाही.</p>
+</main>
+<script>
+if ("serviceWorker" in navigator && location.protocol.startsWith("http")) { window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(()=>{})); }
+</script>
+<script>
+const $=id=>document.getElementById(id);const KEY='marathi_finance_planner_v1';let records=[];try{records=JSON.parse(localStorage.getItem(KEY)||'[]')}catch(e){records=[]}
+const today=new Date();$('month').value=today.toISOString().slice(0,7);$('date').value=today.toISOString().slice(0,10);
+const money=n=>'₹'+Number(n||0).toLocaleString('en-IN',{maximumFractionDigits:2});
+function save(){localStorage.setItem(KEY,JSON.stringify(records));render()}
+function render(){const m=$('month').value;const rows=records.filter(r=>r.date.slice(0,7)===m);let inc=0,out=0,sav=0;rows.forEach(r=>{let a=Number(r.amount);if(r.type==='income')inc+=a;else if(r.type==='saving')sav+=a;else out+=a});$('income').textContent=money(inc);$('expense').textContent=money(out);$('saving').textContent=money(sav);$('balance').textContent=money(inc-out-sav);const box=$('entries');box.innerHTML='';if(!rows.length){box.innerHTML='<div class="card empty">या महिन्यात अजून कोणतीही नोंद नाही.</div>';return}rows.sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id).forEach(r=>{const names={income:'उत्पन्न',expense:'खर्च',emi:'कर्ज / EMI',saving:'बचत'};const div=document.createElement('div');div.className='item';const left=document.createElement('div');const b=document.createElement('b');b.textContent=r.detail;const sm=document.createElement('small');sm.textContent=names[r.type]+' • '+r.date;left.append(b,sm);const right=document.createElement('div');right.style.display='flex';right.style.alignItems='center';const am=document.createElement('span');am.className='amt '+(r.type==='income'?'in':r.type==='saving'?'':'out');am.textContent=money(r.amount);const del=document.createElement('button');del.className='del';del.textContent='हटवा';del.onclick=()=>{if(confirm('ही नोंद हटवायची आहे का?')){records=records.filter(x=>x.id!==r.id);save()}};right.append(am,del);div.append(left,right);box.append(div)})}
+$('add').onclick=()=>{const detail=$('detail').value.trim(),amount=Number($('amount').value),date=$('date').value;if(!detail||!date||!Number.isFinite(amount)||amount<=0){alert('कृपया तपशील, तारीख आणि योग्य रक्कम भरा.');return}records.push({id:Date.now(),type:$('type').value,date,detail,amount});save();$('detail').value='';$('amount').value='';alert('नोंद जतन झाली.')};$('month').onchange=render;
+$('export').onclick=()=>{const m=$('month').value;const rows=records.filter(r=>r.date.slice(0,7)===m);const names={income:'उत्पन्न',expense:'खर्च',emi:'कर्ज / EMI',saving:'बचत'};const csv='तारीख,प्रकार,तपशील,रक्कम\n'+rows.map(r=>[r.date,names[r.type],r.detail,r.amount].map(v=>'"'+String(v).replaceAll('"','""')+'"').join(',')).join('\n');const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='arthik_ahwal_'+m+'.csv';a.click();URL.revokeObjectURL(url)};render();
+</script></body></html>
