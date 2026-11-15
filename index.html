@@ -3,539 +3,489 @@
 <html lang="mr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#173b68">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#174c3c">
+<meta name="description" content="माझे वैयक्तिक आर्थिक नियोजन">
 <title>माझे आर्थिक नियोजन</title>
 <link rel="manifest" href="./manifest.webmanifest">
-
 <style>
+:root{--green:#174c3c;--light:#eaf4ef;--red:#c0392b;--blue:#2364aa;--gold:#d69e2e;--bg:#f4f7f5;--text:#20312a}
 *{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:#f2f5fa;color:#1d2939}
-header{background:#173b68;color:white;padding:22px 16px}
-header h1{margin:0 0 7px;font-size:23px}
-header p{margin:0;font-size:13px}
-main{max-width:760px;margin:auto;padding:14px}
-.card{background:white;padding:16px;border-radius:14px;margin-bottom:14px;box-shadow:0 2px 9px #0000000c}
-h2{font-size:17px;color:#173b68;margin:0 0 14px}
-label{display:block;font-weight:bold;font-size:13px;margin:12px 0 6px}
+body{margin:0;font-family:Arial,"Noto Sans Devanagari",sans-serif;background:var(--bg);color:var(--text)}
+header{background:var(--green);color:white;padding:20px 16px}
+header h1{margin:0;font-size:23px}
+header p{margin:6px 0 0;font-size:13px;opacity:.9}
+main{max-width:900px;margin:auto;padding:14px}
+.card{background:white;padding:16px;border-radius:14px;margin-bottom:14px;box-shadow:0 2px 9px #0000000d}
+h2{font-size:18px;margin:0 0 14px;color:var(--green)}
+h3{font-size:15px;margin:0 0 8px}
+label{display:block;font-size:13px;margin:10px 0 5px;font-weight:bold}
 input,select,button{font:inherit}
-input,select{width:100%;padding:12px;border:1px solid #ccd5e1;border-radius:9px;background:white}
-button{border:0;border-radius:9px;padding:12px 15px;background:#173b68;color:white;font-weight:bold;cursor:pointer}
-button.secondary{background:#e8eef7;color:#173b68}
-button.danger{background:#b83232}
+input,select{width:100%;padding:12px;border:1px solid #ccd7d0;border-radius:9px;background:white}
+button{border:0;border-radius:9px;padding:12px 15px;background:var(--green);color:white;font-weight:bold;cursor:pointer}
+button.secondary{background:#e7eee9;color:var(--green)}
+button.danger{background:#b83227}
 button.small{padding:7px 10px;font-size:12px}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.stat{padding:14px;border-radius:11px;background:#eef3fa}
-.stat span{display:block;font-size:12px;color:#53647b;margin-bottom:8px}
-.stat strong{font-size:19px;overflow-wrap:anywhere}
-.green{color:#13834a}.red{color:#c13a3a}.blue{color:#173b68}
-.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
-.entry{border-bottom:1px solid #e8edf3;padding:12px 0;display:flex;justify-content:space-between;align-items:center;gap:8px}
-.entry:last-child{border:0}
-.entry small{display:block;color:#6a7788;margin-top:5px}
-.entry strong{white-space:nowrap}
-.note{font-size:12px;color:#68778b;line-height:1.6}
-.empty{text-align:center;color:#758195;padding:18px}
-#pinOverlay{display:none;position:fixed;inset:0;background:#10233def;z-index:99;align-items:center;justify-content:center;padding:20px}
-.pinbox{background:white;border-radius:16px;padding:22px;width:100%;max-width:380px}
-.pinbox h2{font-size:21px}
-#pinError{color:#c13a3a;font-size:13px;margin-top:9px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.stat{padding:13px;background:var(--light);border-radius:10px}
+.stat span{display:block;font-size:12px;color:#52665b}
+.stat strong{display:block;font-size:19px;margin-top:5px;overflow-wrap:anywhere}
+.green{color:#16804a}.red{color:var(--red)}.blue{color:var(--blue)}
+.muted{font-size:12px;color:#64756b;line-height:1.5}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.tabs{display:flex;gap:7px;overflow-x:auto;padding-bottom:10px}
+.tabs button{white-space:nowrap;padding:10px 12px}
+.tabs button.active{background:#d9ebe1;color:var(--green);border:1px solid var(--green)}
+.section{display:none}.section.active{display:block}
+.item{border:1px solid #e1e9e4;border-radius:10px;padding:12px;margin:9px 0}
+.item p{margin:5px 0;font-size:13px}
+.progress{height:9px;background:#e8eee9;border-radius:20px;overflow:hidden;margin:8px 0}
+.progress div{height:100%;background:#248454}
+.progress.over div{background:#c0392b}
+hr{border:0;border-top:1px solid #e5ebe7;margin:13px 0}
 .hidden{display:none!important}
-footer{text-align:center;color:#7b8797;font-size:11px;padding:15px}
-@media(max-width:420px){.stat strong{font-size:17px}.row{grid-template-columns:1fr}}
+footer{text-align:center;padding:20px;font-size:12px;color:#718078}
+#pinOverlay{position:fixed;inset:0;background:#f4f7f5;z-index:10;display:flex;align-items:center;justify-content:center;padding:20px}
+#pinBox{width:100%;max-width:360px;background:white;padding:22px;border-radius:16px;box-shadow:0 5px 25px #0002}
+.notice{background:#fff8e6;border-left:4px solid var(--gold);padding:10px;border-radius:7px;font-size:12px;line-height:1.5}
+@media(min-width:650px){.stats{grid-template-columns:repeat(4,minmax(0,1fr))}}
 </style>
 </head>
-
 <body>
 
 <header>
-<h1>माझे आर्थिक नियोजन</h1>
-<p>उत्पन्न • खर्च • EMI • बचत</p>
+ <div class="row">
+  <div>
+   <h1>माझे आर्थिक नियोजन</h1>
+   <p>तुमच्या पैशांचे नियोजन, तुमच्या हातात</p>
+  </div>
+  <button class="secondary" id="securityBtn">🔐 PIN</button>
+ </div>
 </header>
 
 <main>
+ <div class="card">
+  <div class="row">
+   <h2>📊 Dashboard</h2>
+   <input type="month" id="monthFilter" style="width:auto;max-width:170px">
+  </div>
+  <div class="stats">
+   <div class="stat"><span>एकूण उत्पन्न</span><strong class="green" id="incomeTotal">₹0</strong></div>
+   <div class="stat"><span>एकूण खर्च + EMI</span><strong class="red" id="expenseTotal">₹0</strong></div>
+   <div class="stat"><span>एकूण बचत</span><strong class="blue" id="savingTotal">₹0</strong></div>
+   <div class="stat"><span>शिल्लक रक्कम</span><strong id="balanceTotal">₹0</strong></div>
+  </div>
+ </div>
 
-<section class="card">
-<div class="row">
-<div>
-<label for="monthFilter">महिना निवडा</label>
-<input type="month" id="monthFilter">
-</div>
-<div style="display:flex;align-items:end">
-<button id="pinSettings" class="secondary" style="width:100%">🔒 PIN सुरक्षा</button>
-</div>
-</div>
-</section>
+ <div class="tabs">
+  <button class="active" data-tab="transactions">व्यवहार</button>
+  <button data-tab="budget">मासिक बजेट</button>
+  <button data-tab="loans">EMI व कर्ज</button>
+  <button data-tab="backup">Backup</button>
+ </div>
 
-<section class="card">
-<h2>आर्थिक आढावा</h2>
-<div class="stats">
-<div class="stat">
-<span>एकूण उत्पन्न</span>
-<strong class="green" id="incomeTotal">₹0</strong>
-</div>
-<div class="stat">
-<span>एकूण खर्च + EMI</span>
-<strong class="red" id="expenseTotal">₹0</strong>
-</div>
-<div class="stat">
-<span>एकूण बचत</span>
-<strong class="blue" id="savingTotal">₹0</strong>
-</div>
-<div class="stat">
-<span>शिल्लक रक्कम</span>
-<strong id="balanceTotal">₹0</strong>
-</div>
-</div>
-<p class="note">शिल्लक = उत्पन्न − खर्च − EMI − बचत</p>
-</section>
+ <section class="section active" id="transactions">
+  <div class="card">
+   <h2>➕ नवीन व्यवहार नोंदवा</h2>
+   <form id="recordForm">
+    <label>व्यवहाराचा प्रकार</label>
+    <select id="type" required>
+     <option value="income">उत्पन्न</option>
+     <option value="expense">खर्च</option>
+     <option value="emi">EMI / हप्ता</option>
+     <option value="saving">बचत</option>
+    </select>
+    <label>दिनांक</label>
+    <input type="date" id="date" required>
+    <label>रक्कम (₹)</label>
+    <input type="number" id="amount" min="1" step="0.01" required placeholder="उदा. 5000">
+    <div id="categoryWrap" class="hidden">
+     <label>खर्चाची श्रेणी</label>
+     <select id="category">
+      <option>किराणा</option><option>घरखर्च</option><option>प्रवास</option>
+      <option>शिक्षण</option><option>वैद्यकीय</option><option>इतर</option>
+     </select>
+    </div>
+    <label>तपशील</label>
+    <input type="text" id="detail" required placeholder="उदा. पगार, किराणा, प्रवास">
+    <br><br><button type="submit">व्यवहार जतन करा</button>
+   </form>
+  </div>
+  <div class="card">
+   <h2>📋 व्यवहार यादी</h2>
+   <div id="recordList"></div>
+  </div>
+ </section>
 
-<section class="card">
-<h2>➕ नवीन व्यवहार नोंदवा</h2>
+ <section class="section" id="budget">
+  <div class="card">
+   <h2>🎯 मासिक बजेट सेट करा</h2>
+   <p class="muted">वर निवडलेल्या महिन्यासाठी प्रत्येक श्रेणीचे बजेट ठरवा.</p>
+   <form id="budgetForm">
+    <label>खर्चाची श्रेणी</label>
+    <select id="budgetCategory">
+     <option>किराणा</option><option>घरखर्च</option><option>प्रवास</option>
+     <option>शिक्षण</option><option>वैद्यकीय</option><option>इतर</option>
+    </select>
+    <label>बजेट रक्कम (₹)</label>
+    <input type="number" id="budgetAmount" min="1" step="0.01" required placeholder="उदा. 5000">
+    <br><br><button type="submit">बजेट जतन करा</button>
+   </form>
+  </div>
+  <div class="card">
+   <h2>📈 बजेट विरुद्ध प्रत्यक्ष खर्च</h2>
+   <div id="budgetList"></div>
+  </div>
+ </section>
 
-<form id="recordForm">
+ <section class="section" id="loans">
+  <div class="card">
+   <h2>🏦 नवीन कर्ज / EMI नोंदवा</h2>
+   <form id="loanForm">
+    <label>कर्जाचे नाव</label>
+    <input type="text" id="loanName" required placeholder="उदा. Home Loan">
+    <label>बाकी कर्ज रक्कम (₹)</label>
+    <input type="number" id="loanBalance" min="0" step="0.01" required>
+    <label>वार्षिक व्याजदर (%)</label>
+    <input type="number" id="loanRate" min="0" step="0.01" required>
+    <label>मासिक EMI (₹)</label>
+    <input type="number" id="loanEmi" min="0" step="0.01" required>
+    <label>पुढील हप्त्याची तारीख</label>
+    <input type="date" id="loanDue" required>
+    <br><br><button type="submit">कर्ज जतन करा</button>
+   </form>
+  </div>
+  <div class="card">
+   <h2>📑 माझी कर्ज यादी</h2>
+   <div id="loanList"></div>
+   <div class="notice">महत्त्वाचे: कर्जाची बाकी रक्कम तुम्हाला स्वतः अपडेट करावी लागेल. EMI व्यवहार विभागात हप्ता स्वतंत्रपणे नोंदवा. EMI भरल्याने या यादीतील बाकी रक्कम आपोआप कमी होणार नाही.</div>
+  </div>
+ </section>
 
-<label for="type">व्यवहाराचा प्रकार</label>
-<select id="type" required>
-<option value="income">उत्पन्न</option>
-<option value="expense">खर्च</option>
-<option value="emi">EMI / कर्ज हप्ता</option>
-<option value="saving">बचत</option>
-</select>
-
-<div class="row">
-<div>
-<label for="date">दिनांक</label>
-<input type="date" id="date" required>
-</div>
-<div>
-<label for="amount">रक्कम (₹)</label>
-<input type="number" id="amount" min="0.01" step="0.01" placeholder="रक्कम टाका" required>
-</div>
-</div>
-
-<label for="detail">तपशील</label>
-<input type="text" id="detail" maxlength="100" placeholder="उदा. पगार, किराणा, घर EMI" required>
-
-<div class="actions">
-<button type="submit" style="flex:1">व्यवहार जतन करा</button>
-<button type="reset" class="secondary">रीसेट</button>
-</div>
-</form>
-</section>
-
-<section class="card">
-<h2>📋 व्यवहार यादी</h2>
-<div id="recordsList"></div>
-</section>
-
-<section class="card">
-<h2>💾 Backup आणि Restore</h2>
-<p class="note">तुमचा आर्थिक डेटा JSON फाईलमध्ये डाउनलोड करा. गरज पडल्यास Restore वापरून डेटा परत आणा.</p>
-<div class="actions">
-<button id="backupBtn">Backup Download</button>
-<button id="restoreBtn" class="secondary">Restore Backup</button>
-<input type="file" id="restoreFile" accept=".json,application/json" class="hidden">
-</div>
-</section>
-
-<section class="card">
-<h2>🔐 डेटा सुरक्षा</h2>
-<p class="note">तुमचा डेटा या Browser मध्ये स्थानिक स्वरूपात जतन होतो. PIN हा App उघडण्याचा लॉक आहे; तो डेटा Encrypt करत नाही. Browser Data Clear केल्यास डेटा जाऊ शकतो. नियमित Backup घ्या.</p>
-</section>
-
+ <section class="section" id="backup">
+  <div class="card">
+   <h2>💾 Backup आणि Restore</h2>
+   <p class="muted">तुमचे व्यवहार, बजेट आणि कर्ज यांची JSON फाइल डाउनलोड करा.</p>
+   <button id="backupBtn">⬇️ Backup डाउनलोड करा</button>
+   <hr>
+   <label>Backup JSON फाइल निवडा</label>
+   <input type="file" id="restoreFile" accept=".json,application/json">
+   <br><br><button id="restoreBtn" class="secondary">⬆️ Restore करा</button>
+   <p class="muted">Restore केल्यास Backup मधील व्यवहार बदलले जातील. जुन्या Backup मध्ये बजेट किंवा कर्ज नसल्यास सध्याचे बजेट व कर्ज जतन राहतील.</p>
+  </div>
+ </section>
 </main>
 
-<footer>माझे आर्थिक नियोजन • Personal Finance Planner</footer>
+<footer>माझे आर्थिक नियोजन | तुमची माहिती या डिव्हाइसमध्ये जतन होते.</footer>
 
 <div id="pinOverlay">
-<div class="pinbox">
-<h2 id="pinTitle">PIN सुरक्षा</h2>
-<p id="pinMessage" class="note"></p>
-
-<label for="pinInput">PIN (४ ते ६ अंक)</label>
-<input id="pinInput" type="password" inputmode="numeric" maxlength="6" placeholder="PIN टाका">
-
-<div id="pinConfirmWrap">
-<label for="pinConfirm">PIN पुन्हा टाका</label>
-<input id="pinConfirm" type="password" inputmode="numeric" maxlength="6" placeholder="PIN Confirm करा">
-</div>
-
-<div id="pinError"></div>
-
-<div class="actions">
-<button id="pinSubmit" style="flex:1">पुढे</button>
-<button id="pinCancel" class="secondary">रद्द करा</button>
-</div>
-</div>
+ <div id="pinBox">
+  <h2 id="pinTitle">🔐 सुरक्षित प्रवेश</h2>
+  <p class="muted" id="pinMessage">तुमचा PIN टाका.</p>
+  <label>PIN (4 ते 8 अंक)</label>
+  <input type="password" id="pinInput" inputmode="numeric" maxlength="8">
+  <div id="confirmWrap" class="hidden">
+   <label>PIN पुन्हा टाका</label>
+   <input type="password" id="pinConfirm" inputmode="numeric" maxlength="8">
+  </div>
+  <p id="pinError" class="red muted"></p>
+  <br><button id="pinSubmit" style="width:100%">पुढे जा</button>
+  <br><br><button id="pinCancel" class="secondary hidden" style="width:100%">रद्द करा</button>
+ </div>
 </div>
 
 <script>
-if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js').catch(() => {});
-  });
+const KEY='marathi_finance_planner_v1';
+const PINKEY='mfp_pin_v1';
+const BUDGETKEY='mfp_budgets_v1';
+const LOANKEY='mfp_loans_v1';
+
+let records=read(KEY,[]);
+let budgets=read(BUDGETKEY,{});
+let loans=read(LOANKEY,[]);
+let pinMode='unlock';
+
+function read(key,fallback){
+ try{
+  const value=localStorage.getItem(key);
+  return value===null?fallback:JSON.parse(value);
+ }catch(e){return fallback;}
 }
-
-const $ = id => document.getElementById(id);
-const KEY = 'marathi_finance_planner_v1';
-const PINKEY = 'mfp_pin_v1';
-
-let records = [];
-
-try {
-  records = JSON.parse(localStorage.getItem(KEY) || '[]');
-  if (!Array.isArray(records)) records = [];
-} catch (e) {
-  records = [];
+function store(key,value){localStorage.setItem(key,JSON.stringify(value));}
+function money(value){
+ return '₹'+Number(value||0).toLocaleString('en-IN',{maximumFractionDigits:2});
 }
-
-const today = new Date();
-$('date').value = today.getFullYear() + '-' +
-  String(today.getMonth()+1).padStart(2,'0') + '-' +
-  String(today.getDate()).padStart(2,'0');
-
-$('monthFilter').value =
-  today.getFullYear() + '-' + String(today.getMonth()+1).padStart(2,'0');
-
-function money(value) {
-  return Number(value || 0).toLocaleString('en-IN', {
-    style:'currency',
-    currency:'INR',
-    maximumFractionDigits:2
-  });
+function selectedMonth(){return document.getElementById('monthFilter').value;}
+function monthOf(date){return String(date||'').slice(0,7);}
+function safe(value){
+ return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
+function saveRecords(){store(KEY,records);}
+function saveBudgets(){store(BUDGETKEY,budgets);}
+function saveLoans(){store(LOANKEY,loans);}
 
-function save() {
-  localStorage.setItem(KEY, JSON.stringify(records));
-}
+const monthFilter=document.getElementById('monthFilter');
+const today=new Date();
+const localDate=new Date(today.getTime()-today.getTimezoneOffset()*60000).toISOString().slice(0,10);
+monthFilter.value=localDate.slice(0,7);
+document.getElementById('date').value=localDate;
+document.getElementById('loanDue').value=localDate;
 
-const typeNames = {
-  income:'उत्पन्न',
-  expense:'खर्च',
-  emi:'EMI / कर्ज हप्ता',
-  saving:'बचत'
-};
-
-function render() {
-  const month = $('monthFilter').value;
-  const filtered = records.filter(r => r.date && r.date.startsWith(month));
-
-  let income = 0, expense = 0, emi = 0, saving = 0;
-
-  filtered.forEach(r => {
-    const amount = Number(r.amount) || 0;
-    if (r.type === 'income') income += amount;
-    if (r.type === 'expense') expense += amount;
-    if (r.type === 'emi') emi += amount;
-    if (r.type === 'saving') saving += amount;
-  });
-
-  $('incomeTotal').textContent = money(income);
-  $('expenseTotal').textContent = money(expense + emi);
-  $('savingTotal').textContent = money(saving);
-  $('balanceTotal').textContent = money(income - expense - emi - saving);
-
-  const list = $('recordsList');
-  list.replaceChildren();
-
-  if (!filtered.length) {
-    const empty = document.createElement('div');
-    empty.className = 'empty';
-    empty.textContent = 'या महिन्यात कोणताही व्यवहार नोंदवलेला नाही.';
-    list.appendChild(empty);
-    return;
-  }
-
-  filtered.sort((a,b) => (b.date || '').localeCompare(a.date || ''));
-
-  filtered.forEach(r => {
-    const item = document.createElement('div');
-    item.className = 'entry';
-
-    const left = document.createElement('div');
-    const title = document.createElement('strong');
-    title.textContent = r.detail || typeNames[r.type] || 'व्यवहार';
-
-    const sub = document.createElement('small');
-    sub.textContent = (typeNames[r.type] || 'व्यवहार') + ' • ' + (r.date || '');
-
-    left.append(title, sub);
-
-    const right = document.createElement('div');
-    right.style.textAlign = 'right';
-
-    const amount = document.createElement('strong');
-    amount.textContent = money(r.amount);
-
-    const del = document.createElement('button');
-    del.className = 'danger small';
-    del.textContent = 'Delete';
-    del.style.display = 'block';
-    del.style.marginTop = '7px';
-    del.addEventListener('click', () => {
-      if (confirm('हा व्यवहार Delete करायचा आहे का?')) {
-        records = records.filter(x => x.id !== r.id);
-        save();
-        render();
-      }
-    });
-
-    right.append(amount, del);
-    item.append(left, right);
-    list.appendChild(item);
-  });
-}
-
-$('recordForm').addEventListener('submit', function(e) {
-  e.preventDefault();
-
-  const amount = Number($('amount').value);
-  const detail = $('detail').value.trim();
-  const date = $('date').value;
-  const type = $('type').value;
-
-  if (!detail || !date || !Number.isFinite(amount) || amount <= 0) {
-    alert('कृपया योग्य माहिती भरा.');
-    return;
-  }
-
-  records.push({
-    id: Date.now().toString() + Math.random().toString(16).slice(2),
-    type:type,
-    date:date,
-    detail:detail,
-    amount:amount
-  });
-
-  save();
-  $('monthFilter').value = date.slice(0,7);
-  this.reset();
-  $('date').value = date;
+document.querySelectorAll('[data-tab]').forEach(button=>{
+ button.addEventListener('click',()=>{
+  document.querySelectorAll('[data-tab]').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  button.classList.add('active');
+  document.getElementById(button.dataset.tab).classList.add('active');
   render();
-  alert('व्यवहार यशस्वीरीत्या जतन झाला.');
+ });
+});
+monthFilter.addEventListener('change',render);
+
+document.getElementById('type').addEventListener('change',()=>{
+ document.getElementById('categoryWrap').classList.toggle('hidden',document.getElementById('type').value!=='expense');
 });
 
-$('monthFilter').addEventListener('change', render);
+document.getElementById('recordForm').addEventListener('submit',e=>{
+ e.preventDefault();
+ const type=document.getElementById('type').value;
+ const amount=Number(document.getElementById('amount').value);
+ if(!Number.isFinite(amount)||amount<=0){alert('योग्य रक्कम टाका.');return;}
+ const record={
+  id:Date.now().toString()+Math.random().toString(16).slice(2),
+  type,
+  date:document.getElementById('date').value,
+  amount,
+  detail:document.getElementById('detail').value.trim()
+ };
+ if(type==='expense')record.category=document.getElementById('category').value;
+ records.push(record);
+ saveRecords();
+ e.target.reset();
+ document.getElementById('date').value=localDate;
+ document.getElementById('categoryWrap').classList.add('hidden');
+ render();
+ alert('व्यवहार जतन झाला.');
+});
 
-function downloadFile(content, filename, type) {
-  const blob = new Blob([content], {type:type});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
+function render(){
+ const month=selectedMonth();
+ const list=records.filter(r=>monthOf(r.date)===month);
+ const total=type=>list.filter(r=>r.type===type).reduce((s,r)=>s+Number(r.amount||0),0);
+ const income=total('income'),expense=total('expense')+total('emi'),saving=total('saving');
+ document.getElementById('incomeTotal').textContent=money(income);
+ document.getElementById('expenseTotal').textContent=money(expense);
+ document.getElementById('savingTotal').textContent=money(saving);
+ const balance=income-expense-saving;
+ const balanceEl=document.getElementById('balanceTotal');
+ balanceEl.textContent=money(balance);
+ balanceEl.className=balance>=0?'green':'red';
+
+ const names={income:'उत्पन्न',expense:'खर्च',emi:'EMI / हप्ता',saving:'बचत'};
+ const recordList=document.getElementById('recordList');
+ if(!list.length){recordList.innerHTML='<p class="muted">या महिन्यात कोणताही व्यवहार नाही.</p>';}
+ else{
+  recordList.innerHTML=[...list].sort((a,b)=>String(b.date).localeCompare(String(a.date))).map(r=>`
+   <div class="item">
+    <div class="row"><strong>${safe(names[r.type]||r.type)}</strong><strong>${money(r.amount)}</strong></div>
+    <p>${safe(r.detail)}${r.category?' · '+safe(r.category):''}</p>
+    <p class="muted">${safe(r.date)}</p>
+    <button class="danger small" onclick="deleteRecord('${safe(r.id)}')">हटवा</button>
+   </div>`).join('');
+ }
+ renderBudgets(month);
+ renderLoans();
 }
 
-$('backupBtn').addEventListener('click', () => {
-  const backup = {
-    app:'माझे आर्थिक नियोजन',
-    version:1,
-    exportedAt:new Date().toISOString(),
-    records:records
-  };
-  downloadFile(
-    JSON.stringify(backup, null, 2),
-    'financial-planner-backup.json',
-    'application/json'
-  );
-});
-
-$('restoreBtn').addEventListener('click', () => {
-  $('restoreFile').click();
-});
-
-$('restoreFile').addEventListener('change', async function() {
-  const file = this.files[0];
-  if (!file) return;
-
-  try {
-    const data = JSON.parse(await file.text());
-    const imported = Array.isArray(data) ? data : data.records;
-
-    if (!Array.isArray(imported)) {
-      throw new Error('Invalid backup');
-    }
-
-    const valid = imported.every(r =>
-      r && typeof r === 'object' &&
-      ['income','expense','emi','saving'].includes(r.type) &&
-      typeof r.date === 'string' &&
-      typeof r.detail === 'string' &&
-      Number.isFinite(Number(r.amount)) &&
-      Number(r.amount) > 0
-    );
-
-    if (!valid) throw new Error('Invalid records');
-
-    if (confirm('Restore केल्यास सध्याचा व्यवहार डेटा बदलला जाईल. पुढे जायचे का?')) {
-      records = imported.map(r => ({
-        id:r.id || (Date.now().toString() + Math.random().toString(16).slice(2)),
-        type:r.type,
-        date:r.date,
-        detail:r.detail,
-        amount:Number(r.amount)
-      }));
-      save();
-      render();
-      alert('Backup यशस्वीरीत्या Restore झाला.');
-    }
-  } catch (e) {
-    alert('Backup फाईल योग्य नाही किंवा वाचता आली नाही.');
-  }
-
-  this.value = '';
-});
-
-/* PIN SECURITY */
-
-const enc = new TextEncoder();
-
-async function digest(pin, salt) {
-  if (!crypto.subtle) {
-    throw new Error('PIN सुरक्षा या Browser मध्ये उपलब्ध नाही. HTTPS वापरा.');
-  }
-  const data = enc.encode(salt + ':' + pin);
-  const hash = await crypto.subtle.digest('SHA-256', data);
-  return [...new Uint8Array(hash)]
-    .map(x => x.toString(16).padStart(2,'0')).join('');
+function deleteRecord(id){
+ if(!confirm('हा व्यवहार हटवायचा आहे का?'))return;
+ records=records.filter(r=>String(r.id)!==String(id));
+ saveRecords();render();
 }
 
-let pinMode = 'unlock';
-let changingPin = false;
+const categories=['किराणा','घरखर्च','प्रवास','शिक्षण','वैद्यकीय','इतर'];
 
-function showPin(mode) {
-  pinMode = mode;
+document.getElementById('budgetForm').addEventListener('submit',e=>{
+ e.preventDefault();
+ const month=selectedMonth();
+ const category=document.getElementById('budgetCategory').value;
+ const amount=Number(document.getElementById('budgetAmount').value);
+ if(!month||!Number.isFinite(amount)||amount<=0){alert('योग्य बजेट रक्कम टाका.');return;}
+ if(!budgets[month]||typeof budgets[month]!=='object')budgets[month]={};
+ budgets[month][category]=amount;
+ saveBudgets();
+ e.target.reset();render();
+ alert('बजेट जतन झाले.');
+});
 
-  $('pinOverlay').style.display = 'flex';
-  $('pinInput').value = '';
-  $('pinConfirm').value = '';
-  $('pinError').textContent = '';
-
-  const needConfirm = mode === 'setup';
-
-  $('pinConfirmWrap').classList.toggle('hidden', !needConfirm);
-  $('pinCancel').classList.toggle('hidden', mode === 'unlock');
-
-  $('pinTitle').textContent =
-    mode === 'unlock' ? 'अ‍ॅप लॉक' :
-    mode === 'change' ? 'जुना PIN तपासा' : 'नवीन PIN सेट करा';
-
-  $('pinMessage').textContent =
-    mode === 'unlock' ? 'अ‍ॅप उघडण्यासाठी तुमचा PIN टाका.' :
-    mode === 'change' ? 'PIN बदलण्यासाठी सध्याचा PIN टाका.' :
-    '४ ते ६ अंकी नवीन PIN टाका आणि Confirm करा.';
-
-  $('pinSubmit').textContent =
-    mode === 'unlock' ? 'अ‍ॅप उघडा' :
-    mode === 'change' ? 'पुढे जा' : 'PIN जतन करा';
-
-  $('pinInput').focus();
+function renderBudgets(month){
+ const data=budgets[month]||{};
+ const list=document.getElementById('budgetList');
+ const saved=categories.filter(c=>Number(data[c])>0);
+ if(!saved.length){list.innerHTML='<p class="muted">या महिन्यासाठी बजेट सेट केलेले नाही.</p>';return;}
+ list.innerHTML=saved.map(category=>{
+  const budget=Number(data[category]);
+  const spent=records.filter(r=>r.type==='expense'&&monthOf(r.date)===month&&(r.category||'इतर')===category).reduce((s,r)=>s+Number(r.amount||0),0);
+  const remaining=budget-spent;
+  const percent=Math.min(100,budget?spent/budget*100:0);
+  return `<div class="item">
+   <div class="row"><strong>${safe(category)}</strong><strong>${money(spent)} / ${money(budget)}</strong></div>
+   <div class="progress ${spent>budget?'over':''}"><div style="width:${percent}%"></div></div>
+   <p class="${remaining>=0?'green':'red'}">${remaining>=0?'शिल्लक: ':'बजेटपेक्षा जास्त: '}${money(Math.abs(remaining))}</p>
+   <button class="danger small" onclick="deleteBudget('${safe(month)}','${safe(category)}')">बजेट हटवा</button>
+  </div>`;
+ }).join('');
 }
 
-async function pinAction() {
-  const p = $('pinInput').value;
-
-  if (!/^\d{4,6}$/.test(p)) {
-    $('pinError').textContent = 'कृपया ४ ते ६ अंकी PIN टाका.';
-    return;
-  }
-
-  try {
-    const saved = JSON.parse(localStorage.getItem(PINKEY) || 'null');
-
-    if (pinMode === 'unlock') {
-      if (saved && await digest(p, saved.salt) === saved.hash) {
-        $('pinOverlay').style.display = 'none';
-        return;
-      }
-      $('pinError').textContent = 'PIN चुकीचा आहे. पुन्हा प्रयत्न करा.';
-      return;
-    }
-
-    if (pinMode === 'change') {
-      if (!saved || await digest(p, saved.salt) !== saved.hash) {
-        $('pinError').textContent = 'जुना PIN चुकीचा आहे.';
-        return;
-      }
-
-      changingPin = true;
-      pinMode = 'setup';
-
-      $('pinInput').value = '';
-      $('pinConfirm').value = '';
-      $('pinConfirmWrap').classList.remove('hidden');
-      $('pinTitle').textContent = 'नवीन PIN सेट करा';
-      $('pinMessage').textContent = 'नवीन ४ ते ६ अंकी PIN टाका आणि पुन्हा Confirm करा.';
-      $('pinSubmit').textContent = 'नवीन PIN जतन करा';
-      $('pinError').textContent = '';
-      $('pinInput').focus();
-      return;
-    }
-
-    if (pinMode === 'setup') {
-      if (p !== $('pinConfirm').value) {
-        $('pinError').textContent = 'दोन्ही PIN जुळत नाहीत.';
-        return;
-      }
-
-      const salt = crypto.getRandomValues(new Uint8Array(16));
-      const saltHex = [...salt]
-        .map(x => x.toString(16).padStart(2,'0')).join('');
-
-      const hash = await digest(p, saltHex);
-
-      localStorage.setItem(PINKEY, JSON.stringify({
-        salt:saltHex,
-        hash:hash
-      }));
-
-      $('pinOverlay').style.display = 'none';
-
-      alert(changingPin ? 'PIN यशस्वीरीत्या बदलला.' : 'नवीन PIN यशस्वीरीत्या सेट झाला.');
-      changingPin = false;
-    }
-  } catch (e) {
-    $('pinError').textContent = 'PIN प्रक्रिया पूर्ण झाली नाही. HTTPS कनेक्शन तपासा.';
-  }
+function deleteBudget(month,category){
+ if(!confirm('हे बजेट हटवायचे आहे का?'))return;
+ if(budgets[month])delete budgets[month][category];
+ saveBudgets();render();
 }
 
-$('pinSubmit').addEventListener('click', pinAction);
-
-$('pinInput').addEventListener('keydown', e => {
-  if (e.key === 'Enter') pinAction();
+document.getElementById('loanForm').addEventListener('submit',e=>{
+ e.preventDefault();
+ const loan={
+  id:Date.now().toString()+Math.random().toString(16).slice(2),
+  name:document.getElementById('loanName').value.trim(),
+  balance:Number(document.getElementById('loanBalance').value),
+  rate:Number(document.getElementById('loanRate').value),
+  emi:Number(document.getElementById('loanEmi').value),
+  due:document.getElementById('loanDue').value
+ };
+ if(!loan.name||![loan.balance,loan.rate,loan.emi].every(Number.isFinite)||loan.balance<0||loan.rate<0||loan.emi<0){alert('कर्जाची माहिती तपासा.');return;}
+ loans.push(loan);saveLoans();e.target.reset();
+ document.getElementById('loanDue').value=localDate;
+ render();alert('कर्जाची माहिती जतन झाली.');
 });
 
-$('pinConfirm').addEventListener('keydown', e => {
-  if (e.key === 'Enter') pinAction();
+function renderLoans(){
+ const list=document.getElementById('loanList');
+ if(!loans.length){list.innerHTML='<p class="muted">अजून कोणतेही कर्ज नोंदवलेले नाही.</p>';return;}
+ list.innerHTML=loans.map(l=>`
+  <div class="item">
+   <h3>${safe(l.name)}</h3>
+   <p>बाकी कर्ज: <strong>${money(l.balance)}</strong></p>
+   <p>व्याजदर: ${safe(l.rate)}% वार्षिक</p>
+   <p>मासिक EMI: <strong>${money(l.emi)}</strong></p>
+   <p>पुढील हप्ता: ${safe(l.due)}</p>
+   <hr>
+   <label>अपडेट केलेली बाकी रक्कम (₹)</label>
+   <input type="number" min="0" step="0.01" id="balance-${safe(l.id)}" value="${Number(l.balance)}">
+   <br><br>
+   <div class="row">
+    <button class="small" onclick="updateLoan('${safe(l.id)}')">बाकी रक्कम अपडेट</button>
+    <button class="danger small" onclick="deleteLoan('${safe(l.id)}')">कर्ज हटवा</button>
+   </div>
+  </div>`).join('');
+}
+
+function updateLoan(id){
+ const input=document.getElementById('balance-'+id);
+ const amount=Number(input.value);
+ if(!Number.isFinite(amount)||amount<0){alert('योग्य बाकी रक्कम टाका.');return;}
+ const loan=loans.find(l=>String(l.id)===String(id));
+ if(!loan)return;
+ loan.balance=amount;saveLoans();render();
+ alert('बाकी रक्कम अपडेट झाली.');
+}
+function deleteLoan(id){
+ if(!confirm('हे कर्ज हटवायचे आहे का?'))return;
+ loans=loans.filter(l=>String(l.id)!==String(id));
+ saveLoans();render();
+}
+
+document.getElementById('backupBtn').addEventListener('click',()=>{
+ const data={
+  app:'Marathi Financial Planner',
+  version:2,
+  exportedAt:new Date().toISOString(),
+  records,budgets,loans
+ };
+ const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+ const url=URL.createObjectURL(blob);
+ const a=document.createElement('a');
+ a.href=url;a.download='Maza_Financial_Planner_Backup_'+localDate+'.json';
+ a.click();URL.revokeObjectURL(url);
 });
 
-$('pinCancel').addEventListener('click', () => {
-  if (!localStorage.getItem(PINKEY)) {
-    changingPin = false;
+document.getElementById('restoreBtn').addEventListener('click',async()=>{
+ const file=document.getElementById('restoreFile').files[0];
+ if(!file){alert('प्रथम Backup JSON फाइल निवडा.');return;}
+ if(!confirm('Restore केल्यास सध्याचे व्यवहार Backup मधील व्यवहारांनी बदलतील. पुढे जायचे आहे का?'))return;
+ try{
+  const data=JSON.parse(await file.text());
+  const incoming=Array.isArray(data)?data:data.records;
+  if(!Array.isArray(incoming))throw new Error('Invalid records');
+  if(!incoming.every(r=>r&&typeof r==='object'&&['income','expense','emi','saving'].includes(r.type)&&Number.isFinite(Number(r.amount))&&Number(r.amount)>0&&typeof r.date==='string'))throw new Error('Invalid record data');
+  records=incoming;
+  saveRecords();
+  if(!Array.isArray(data)&&data.budgets!==undefined){
+   if(!data.budgets||typeof data.budgets!=='object'||Array.isArray(data.budgets))throw new Error('Invalid budgets');
+   budgets=data.budgets;saveBudgets();
   }
-  $('pinOverlay').style.display = 'none';
+  if(!Array.isArray(data)&&data.loans!==undefined){
+   if(!Array.isArray(data.loans))throw new Error('Invalid loans');
+   loans=data.loans;saveLoans();
+  }
+  render();alert('Backup Restore यशस्वी झाले.');
+ }catch(err){alert('Backup फाइल योग्य नाही किंवा वाचता आली नाही.');}
 });
 
-$('pinSettings').addEventListener('click', () => {
-  changingPin = false;
-  showPin(localStorage.getItem(PINKEY) ? 'change' : 'setup');
+async function hashPin(pin,salt){
+ const bytes=new TextEncoder().encode(salt+':'+pin);
+ const digest=await crypto.subtle.digest('SHA-256',bytes);
+ return Array.from(new Uint8Array(digest)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+function getPinData(){return read(PINKEY,null);}
+function showPin(mode){
+ pinMode=mode;
+ const data=getPinData();
+ const title=document.getElementById('pinTitle');
+ const message=document.getElementById('pinMessage');
+ const confirmWrap=document.getElementById('confirmWrap');
+ const cancel=document.getElementById('pinCancel');
+ document.getElementById('pinInput').value='';
+ document.getElementById('pinConfirm').value='';
+ document.getElementById('pinError').textContent='';
+ confirmWrap.classList.toggle('hidden',mode==='unlock');
+ cancel.classList.toggle('hidden',mode==='unlock'||mode==='setup');
+ title.textContent=mode==='unlock'?'🔐 PIN टाका':mode==='change'?'🔑 नवीन PIN सेट करा':'🔐 PIN तयार करा';
+ message.textContent=mode==='unlock'?'App उघडण्यासाठी तुमचा PIN टाका.':'4 ते 8 अंकांचा PIN तयार करा.';
+ document.getElementById('pinOverlay').classList.remove('hidden');
+}
+document.getElementById('securityBtn').addEventListener('click',()=>showPin('change'));
+document.getElementById('pinCancel').addEventListener('click',()=>{
+ document.getElementById('pinOverlay').classList.add('hidden');
 });
+document.getElementById('pinSubmit').addEventListener('click',async()=>{
+ const pin=document.getElementById('pinInput').value;
+ const confirmPin=document.getElementById('pinConfirm').value;
+ const error=document.getElementById('pinError');
+ if(!/^\d{4,8}$/.test(pin)){error.textContent='PIN 4 ते 8 अंकांचा असावा.';return;}
+ if(pinMode==='unlock'){
+  const data=getPinData();
+  if(!data){showPin('setup');return;}
+  const hashed=await hashPin(pin,data.salt);
+  if(hashed!==data.hash){error.textContent='चुकीचा PIN. पुन्हा प्रयत्न करा.';return;}
+  document.getElementById('pinOverlay').classList.add('hidden');
+  return;
+ }
+ if(pin!==confirmPin){error.textContent='दोन्ही PIN जुळत नाहीत.';return;}
+ const salt=crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random();
+ const hash=await hashPin(pin,salt);
+ store(PINKEY,{salt,hash});
+ document.getElementById('pinOverlay').classList.add('hidden');
+ alert('PIN यशस्वीरीत्या सेट झाला.');
+});
+if(!getPinData())showPin('setup');
+else showPin('unlock');
 
-/* APP START */
-
+if('serviceWorker' in navigator){
+ window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+}
 render();
-
-if (localStorage.getItem(PINKEY)) {
-  showPin('unlock');
-} else {
-  showPin('setup');
-}
-
 </script>
 </body>
 </html>
