@@ -38,6 +38,53 @@ $('restoreBtn').onclick=()=>$('restoreFile').click();$('restoreFile').onchange=a
 // PIN is a local convenience lock, not encryption.
 const enc=new TextEncoder();async function digest(pin,salt){const data=enc.encode(salt+':'+pin);const hash=await crypto.subtle.digest('SHA-256',data);return [...new Uint8Array(hash)].map(x=>x.toString(16).padStart(2,'0')).join('')}
 let pinMode='unlock';function showPin(mode){pinMode=mode;$('pinOverlay').style.display='flex';$('pinInput').value='';$('pinConfirm').value='';$('pinError').textContent='';$('pinConfirm').classList.toggle('hidden',mode!=='setup');$('pinCancel').classList.toggle('hidden',mode==='unlock');$('pinTitle').textContent=mode==='setup'?'नवीन PIN सेट करा':mode==='change'?'PIN बदला':'अ‍ॅप लॉक';$('pinMessage').textContent=mode==='unlock'?'अ‍ॅप उघडण्यासाठी PIN टाका.':'४ ते ६ अंकी PIN टाका. PIN लक्षात ठेवा; विसरल्यास अ‍ॅपचा स्थानिक डेटा रीसेट करावा लागू शकतो.';$('pinSubmit').textContent=mode==='unlock'?'अ‍ॅप उघडा':'जतन करा';$('pinInput').focus()}
-async function pinAction(){const p=$('pinInput').value;if(!/^\d{4,6}$/.test(p)){$('pinError').textContent='४ ते ६ अंकांचा PIN टाका.';return}if(pinMode==='unlock'){const saved=JSON.parse(localStorage.getItem(PINKEY)||'null');if(!saved||await digest(p,saved.salt)===saved.hash){$('pinOverlay').style.display='none';return}$('pinError').textContent='PIN चुकीचा आहे. पुन्हा प्रयत्न करा.';return}if(pinMode==='setup'){if(p!==$('pinConfirm').value){$('pinError').textContent='दोन्ही PIN जुळत नाहीत.';return}}const salt=crypto.getRandomValues(new Uint8Array(16));const saltHex=[...salt].map(x=>x.toString(16).padStart(2,'0')).join('');localStorage.setItem(PINKEY,JSON.stringify({salt:saltHex,hash:await digest(p,saltHex)}));$('pinOverlay').style.display='none';alert('PIN सेट झाला. पुढील वेळी अ‍ॅप उघडताना PIN विचारला जाईल.');}
-$('pinSubmit').onclick=pinAction;$('pinCancel').onclick=()=>$('pinOverlay').style.display='none';$('pinSettings').onclick=()=>showPin(localStorage.getItem(PINKEY)?'change':'setup');if(localStorage.getItem(PINKEY))showPin('unlock');render();
-</script></body></html>
+
+async function pinAction(){
+  const p = $('pinInput').value;
+  const saved = JSON.parse(localStorage.getItem(PINKEY) || 'null');
+
+  if(!/^\d{4,6}$/.test(p)){
+    $('pinError').textContent = '४ ते ६ अंकांचा PIN टाका.';
+    return;
+  }
+
+  if(pinMode === 'unlock'){
+    if(saved && await digest(p, saved.salt) === saved.hash){
+      $('pinOverlay').style.display = 'none';
+      return;
+    }
+    $('pinError').textContent = 'PIN चुकीचा आहे. पुन्हा प्रयत्न करा.';
+    return;
+  }
+
+  if(pinMode === 'change'){
+    if(!saved || await digest(p, saved.salt) !== saved.hash){
+      $('pinError').textContent = 'जुना PIN चुकीचा आहे.';
+      return;
+    }
+    pinMode = 'setup';
+    $('pinInput').value = '';
+    $('pinConfirm').value = '';
+    $('pinError').textContent = 'आता नवीन PIN टाका आणि Confirm करा.';
+    $('pinInput').focus();
+    return;
+  }
+
+  if(pinMode === 'setup'){
+    if(p !== $('pinConfirm').value){
+      $('pinError').textContent = 'दोन्ही PIN जुळत नाहीत.';
+      return;
+    }
+  }
+
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  const saltHex = [...salt].map(x => x.toString(16).padStart(2,'0')).join('');
+
+  localStorage.setItem(PINKEY, JSON.stringify({
+    salt: saltHex,
+    hash: await digest(p, saltHex)
+  }));
+
+  $('pinOverlay').style.display = 'none';
+  alert('नवीन PIN यशस्वीरीत्या सेट झाला.');
+}
