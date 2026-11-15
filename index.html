@@ -43,6 +43,9 @@ button.small{padding:7px 10px;font-size:12px}
 .progress{height:9px;background:#e8eee9;border-radius:20px;overflow:hidden;margin:8px 0}
 .progress div{height:100%;background:#248454}
 .progress.over div{background:#c0392b}
+.bar{height:12px;background:#e8eee9;border-radius:20px;overflow:hidden;flex:1;min-width:70px}
+.bar div{height:100%;background:#248454;border-radius:20px}
+.bar.redbar div{background:#c0392b}
 hr{border:0;border-top:1px solid #e5ebe7;margin:13px 0}
 .hidden{display:none!important}
 footer{text-align:center;padding:20px;font-size:12px;color:#718078}
@@ -82,6 +85,7 @@ footer{text-align:center;padding:20px;font-size:12px;color:#718078}
   <button class="active" data-tab="transactions">व्यवहार</button>
   <button data-tab="budget">मासिक बजेट</button>
   <button data-tab="loans">EMI व कर्ज</button>
+  <button data-tab="report">मासिक अहवाल</button>
   <button data-tab="backup">Backup</button>
  </div>
 
@@ -159,7 +163,32 @@ footer{text-align:center;padding:20px;font-size:12px;color:#718078}
   <div class="card">
    <h2>📑 माझी कर्ज यादी</h2>
    <div id="loanList"></div>
-   <div class="notice">महत्त्वाचे: कर्जाची बाकी रक्कम तुम्हाला स्वतः अपडेट करावी लागेल. EMI व्यवहार विभागात हप्ता स्वतंत्रपणे नोंदवा. EMI भरल्याने या यादीतील बाकी रक्कम आपोआप कमी होणार नाही.</div>
+   <div class="notice">कर्जाची बाकी रक्कम तुम्हाला स्वतः अपडेट करावी लागेल. EMI व्यवहार विभागात हप्ता स्वतंत्रपणे नोंदवा. EMI भरल्याने या यादीतील बाकी रक्कम आपोआप कमी होणार नाही.</div>
+  </div>
+ </section>
+
+ <section class="section" id="report">
+  <div class="card">
+   <h2>📊 मासिक आर्थिक अहवाल</h2>
+   <p class="muted">वर निवडलेल्या महिन्याचा आर्थिक आढावा.</p>
+   <div class="stats">
+    <div class="stat"><span>एकूण उत्पन्न</span><strong class="green" id="reportIncome">₹0</strong></div>
+    <div class="stat"><span>खर्च + EMI</span><strong class="red" id="reportExpense">₹0</strong></div>
+    <div class="stat"><span>बचत</span><strong class="blue" id="reportSaving">₹0</strong></div>
+    <div class="stat"><span>शिल्लक</span><strong id="reportBalance">₹0</strong></div>
+   </div>
+  </div>
+  <div class="card">
+   <h2>📉 मागील महिन्याशी तुलना</h2>
+   <div id="monthComparison"></div>
+  </div>
+  <div class="card">
+   <h2>🧾 खर्चाचे वर्गीकरण</h2>
+   <div id="categoryReport"></div>
+  </div>
+  <div class="card">
+   <h2>💡 आर्थिक सारांश</h2>
+   <div id="financialSummary"></div>
   </div>
  </section>
 
@@ -172,7 +201,7 @@ footer{text-align:center;padding:20px;font-size:12px;color:#718078}
    <label>Backup JSON फाइल निवडा</label>
    <input type="file" id="restoreFile" accept=".json,application/json">
    <br><br><button id="restoreBtn" class="secondary">⬆️ Restore करा</button>
-   <p class="muted">Restore केल्यास Backup मधील व्यवहार बदलले जातील. जुन्या Backup मध्ये बजेट किंवा कर्ज नसल्यास सध्याचे बजेट व कर्ज जतन राहतील.</p>
+   <p class="muted">जुन्या Backup मध्ये बजेट किंवा कर्ज नसल्यास सध्याचे बजेट व कर्ज जतन राहतील.</p>
   </div>
  </section>
 </main>
@@ -221,9 +250,17 @@ function monthOf(date){return String(date||'').slice(0,7);}
 function safe(value){
  return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
-function saveRecords(){store(KEY,records);}
-function saveBudgets(){store(BUDGETKEY,budgets);}
-function saveLoans(){store(LOANKEY,loans);}
+function previousMonth(month){
+ const parts=month.split('-').map(Number);
+ const d=new Date(parts[0],parts[1]-2,1);
+ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+}
+function monthRecords(month){
+ return records.filter(r=>monthOf(r.date)===month);
+}
+function totalFor(list,type){
+ return list.filter(r=>r.type===type).reduce((s,r)=>s+Number(r.amount||0),0);
+}
 
 const monthFilter=document.getElementById('monthFilter');
 const today=new Date();
@@ -261,7 +298,7 @@ document.getElementById('recordForm').addEventListener('submit',e=>{
  };
  if(type==='expense')record.category=document.getElementById('category').value;
  records.push(record);
- saveRecords();
+ store(KEY,records);
  e.target.reset();
  document.getElementById('date').value=localDate;
  document.getElementById('categoryWrap').classList.add('hidden');
@@ -271,13 +308,15 @@ document.getElementById('recordForm').addEventListener('submit',e=>{
 
 function render(){
  const month=selectedMonth();
- const list=records.filter(r=>monthOf(r.date)===month);
- const total=type=>list.filter(r=>r.type===type).reduce((s,r)=>s+Number(r.amount||0),0);
- const income=total('income'),expense=total('expense')+total('emi'),saving=total('saving');
+ const list=monthRecords(month);
+ const income=totalFor(list,'income');
+ const expense=totalFor(list,'expense')+totalFor(list,'emi');
+ const saving=totalFor(list,'saving');
+ const balance=income-expense-saving;
+
  document.getElementById('incomeTotal').textContent=money(income);
  document.getElementById('expenseTotal').textContent=money(expense);
  document.getElementById('savingTotal').textContent=money(saving);
- const balance=income-expense-saving;
  const balanceEl=document.getElementById('balanceTotal');
  balanceEl.textContent=money(balance);
  balanceEl.className=balance>=0?'green':'red';
@@ -296,12 +335,13 @@ function render(){
  }
  renderBudgets(month);
  renderLoans();
+ renderReport(month);
 }
 
 function deleteRecord(id){
  if(!confirm('हा व्यवहार हटवायचा आहे का?'))return;
  records=records.filter(r=>String(r.id)!==String(id));
- saveRecords();render();
+ store(KEY,records);render();
 }
 
 const categories=['किराणा','घरखर्च','प्रवास','शिक्षण','वैद्यकीय','इतर'];
@@ -314,7 +354,7 @@ document.getElementById('budgetForm').addEventListener('submit',e=>{
  if(!month||!Number.isFinite(amount)||amount<=0){alert('योग्य बजेट रक्कम टाका.');return;}
  if(!budgets[month]||typeof budgets[month]!=='object')budgets[month]={};
  budgets[month][category]=amount;
- saveBudgets();
+ store(BUDGETKEY,budgets);
  e.target.reset();render();
  alert('बजेट जतन झाले.');
 });
@@ -341,7 +381,7 @@ function renderBudgets(month){
 function deleteBudget(month,category){
  if(!confirm('हे बजेट हटवायचे आहे का?'))return;
  if(budgets[month])delete budgets[month][category];
- saveBudgets();render();
+ store(BUDGETKEY,budgets);render();
 }
 
 document.getElementById('loanForm').addEventListener('submit',e=>{
@@ -355,7 +395,7 @@ document.getElementById('loanForm').addEventListener('submit',e=>{
   due:document.getElementById('loanDue').value
  };
  if(!loan.name||![loan.balance,loan.rate,loan.emi].every(Number.isFinite)||loan.balance<0||loan.rate<0||loan.emi<0){alert('कर्जाची माहिती तपासा.');return;}
- loans.push(loan);saveLoans();e.target.reset();
+ loans.push(loan);store(LOANKEY,loans);e.target.reset();
  document.getElementById('loanDue').value=localDate;
  render();alert('कर्जाची माहिती जतन झाली.');
 });
@@ -387,19 +427,98 @@ function updateLoan(id){
  if(!Number.isFinite(amount)||amount<0){alert('योग्य बाकी रक्कम टाका.');return;}
  const loan=loans.find(l=>String(l.id)===String(id));
  if(!loan)return;
- loan.balance=amount;saveLoans();render();
+ loan.balance=amount;store(LOANKEY,loans);render();
  alert('बाकी रक्कम अपडेट झाली.');
 }
 function deleteLoan(id){
  if(!confirm('हे कर्ज हटवायचे आहे का?'))return;
  loans=loans.filter(l=>String(l.id)!==String(id));
- saveLoans();render();
+ store(LOANKEY,loans);render();
+}
+
+/* MONTHLY FINANCIAL REPORT */
+function renderReport(month){
+ const list=monthRecords(month);
+ const income=totalFor(list,'income');
+ const expense=totalFor(list,'expense')+totalFor(list,'emi');
+ const saving=totalFor(list,'saving');
+ const balance=income-expense-saving;
+
+ document.getElementById('reportIncome').textContent=money(income);
+ document.getElementById('reportExpense').textContent=money(expense);
+ document.getElementById('reportSaving').textContent=money(saving);
+ const balanceEl=document.getElementById('reportBalance');
+ balanceEl.textContent=money(balance);
+ balanceEl.className=balance>=0?'green':'red';
+
+ const previous=previousMonth(month);
+ const oldList=monthRecords(previous);
+ const oldIncome=totalFor(oldList,'income');
+ const oldExpense=totalFor(oldList,'expense')+totalFor(oldList,'emi');
+ const oldSaving=totalFor(oldList,'saving');
+
+ function comparison(label,current,old){
+  let message='';
+  if(old===0&&current===0)message='दोन्ही महिन्यांत नोंद नाही';
+  else if(old===0)message='मागील महिन्यात नोंद नव्हती';
+  else{
+   const diff=current-old;
+   const percent=Math.abs(diff/old*100).toFixed(1);
+   message=(diff>0?'वाढ ':'कमी ')+money(Math.abs(diff))+' ('+percent+'%)';
+  }
+  return `<div class="item">
+   <strong>${label}</strong>
+   <p>निवडलेला महिना: ${money(current)}</p>
+   <p>मागील महिना: ${money(old)}</p>
+   <p class="muted">${message}</p>
+  </div>`;
+ }
+
+ document.getElementById('monthComparison').innerHTML=
+  comparison('उत्पन्न',income,oldIncome)+
+  comparison('खर्च + EMI',expense,oldExpense)+
+  comparison('बचत',saving,oldSaving);
+
+ const categoryTotals={};
+ list.filter(r=>r.type==='expense').forEach(r=>{
+  const category=r.category||'इतर';
+  categoryTotals[category]=(categoryTotals[category]||0)+Number(r.amount||0);
+ });
+ const entries=Object.entries(categoryTotals).sort((a,b)=>b[1]-a[1]);
+ const categoryReport=document.getElementById('categoryReport');
+ if(!entries.length){
+  categoryReport.innerHTML='<p class="muted">या महिन्यात खर्चाची नोंद नाही.</p>';
+ }else{
+  const max=Math.max(...entries.map(x=>x[1]),1);
+  categoryReport.innerHTML=entries.map(([name,value])=>`
+   <div class="item">
+    <div class="row"><strong>${safe(name)}</strong><strong>${money(value)}</strong></div>
+    <div class="bar"><div style="width:${value/max*100}%"></div></div>
+   </div>`).join('');
+ }
+
+ let summary='';
+ if(!list.length){
+  summary='<p class="muted">या महिन्यात व्यवहार नोंदवलेले नाहीत. व्यवहार नोंदवल्यानंतर अहवाल येथे दिसेल.</p>';
+ }else{
+  summary+=`<p>या महिन्यातील एकूण उत्पन्न <strong class="green">${money(income)}</strong> आहे.</p>`;
+  summary+=`<p>खर्च आणि EMI मिळून <strong class="red">${money(expense)}</strong> झाले आहेत.</p>`;
+  summary+=`<p>बचत म्हणून <strong class="blue">${money(saving)}</strong> नोंदवली आहे.</p>`;
+  summary+=balance>=0
+   ?`<p class="green">उत्पन्नातून खर्च आणि बचत वजा केल्यानंतर ${money(balance)} शिल्लक आहे.</p>`
+   :`<p class="red">नोंदवलेल्या खर्च व बचतीची रक्कम उत्पन्नापेक्षा ${money(Math.abs(balance))} जास्त आहे.</p>`;
+  if(income>0){
+   const rate=saving/income*100;
+   summary+=`<p>नोंदवलेल्या बचतीचे उत्पन्नातील प्रमाण: <strong>${rate.toFixed(1)}%</strong></p>`;
+  }
+ }
+ document.getElementById('financialSummary').innerHTML=summary;
 }
 
 document.getElementById('backupBtn').addEventListener('click',()=>{
  const data={
   app:'Marathi Financial Planner',
-  version:2,
+  version:3,
   exportedAt:new Date().toISOString(),
   records,budgets,loans
  };
@@ -419,15 +538,14 @@ document.getElementById('restoreBtn').addEventListener('click',async()=>{
   const incoming=Array.isArray(data)?data:data.records;
   if(!Array.isArray(incoming))throw new Error('Invalid records');
   if(!incoming.every(r=>r&&typeof r==='object'&&['income','expense','emi','saving'].includes(r.type)&&Number.isFinite(Number(r.amount))&&Number(r.amount)>0&&typeof r.date==='string'))throw new Error('Invalid record data');
-  records=incoming;
-  saveRecords();
+  records=incoming;store(KEY,records);
   if(!Array.isArray(data)&&data.budgets!==undefined){
    if(!data.budgets||typeof data.budgets!=='object'||Array.isArray(data.budgets))throw new Error('Invalid budgets');
-   budgets=data.budgets;saveBudgets();
+   budgets=data.budgets;store(BUDGETKEY,budgets);
   }
   if(!Array.isArray(data)&&data.loans!==undefined){
    if(!Array.isArray(data.loans))throw new Error('Invalid loans');
-   loans=data.loans;saveLoans();
+   loans=data.loans;store(LOANKEY,loans);
   }
   render();alert('Backup Restore यशस्वी झाले.');
  }catch(err){alert('Backup फाइल योग्य नाही किंवा वाचता आली नाही.');}
@@ -441,7 +559,6 @@ async function hashPin(pin,salt){
 function getPinData(){return read(PINKEY,null);}
 function showPin(mode){
  pinMode=mode;
- const data=getPinData();
  const title=document.getElementById('pinTitle');
  const message=document.getElementById('pinMessage');
  const confirmWrap=document.getElementById('confirmWrap');
